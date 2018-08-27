@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>固定奖金及赛果-竞猜足球-中国体彩网</title>
+<link rel="Shortcut Icon" href="/favicon.ico" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="description" content="竞彩足球固定奖金"/>
+<meta name="keywords" content="足球,竞彩,固定奖金"/>
+<link href="/res/css/base.css" rel="stylesheet" type="text/css">
+<link href="/res/css/jingcailanzuqiu.css" rel="stylesheet" type="text/css">
+<script src="/res/js/jquery-1.12.2.min.js" type="text/javascript"></script>
+</head>
+<body>
+<!-- 首页头文件 -->
+<script src="/res/js/user_cookie.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+	var str;
+	if(window.location.pathname=="/" || window.location.pathname == "/index.html"){
+		str = "<font style='cursor:pointer;' onclick='SetHome(window.location)' >设为首页</font>　　<font onclick='AddFavorite(window.location,document.title)' style='cursor:pointer;'>加入收藏</font>　　中国体育彩票客服热线：<font style='font-weight:bold; color:#D80018;'>95086</font>";
+	}else{
+		str = "<a href='/index.html'>中国体彩网首页</a>　　中国体育彩票客服热线：<font style='font-weight:bold; color:#D80018;'>95086</font>";
+	}
+	$("#isIndex").html(str);
+	
+            var u=GetCookie("userName");
+            
+             if(u != null){
+                     $("#no_login").attr("style", "display: none");
+                     $("#is_login").attr("style", "display: block");  
+                     $("#l_name").text(u);
+                    }else{
+                    $("#is_login").attr("style", "display: none");
+                    $("#no_login").attr("style", "display: block");
+              }
+});
+
+
+</script>
+
+<div class="t01">
+	<div class="c01">
+		<div class="t02 black wryh">
+			<div class="t03" style="width:360px;" id="isIndex"></div>
+			<div id="is_login" style="display: none">
+				<div class="t031" style="cursor: pointer; padding:0 40px 0 0;"><a href="/logout.jspx" onclick="DeleteCookie();" target="_blank"><img src="/res/images/b051.png"></a></div>
+				<div class="t031" style=" padding:0 20px 0 0;">您好，<a href="/memberCenter.jspx" target="_blank"><font color="#cd0100" id="l_name"></font></a></div>
+			</div>
+			<div id="no_login" >
+				<div class="t031" style="cursor: pointer; padding:0 40px 0 0;display:none;"><a href="/login.jspx" alt="中国体彩网会员登录" title="中国体彩网会员登录" target="_blank"><img src="/res/images/b03.png"></a></div>
+				<div class="t031"  style=" padding:0 20px 0 0;display:none;"><a href="/register.jspx" alt="中国体彩网会员注册" title="中国体彩网会员注册" target="_blank">注册</a></div>
+		    </div>
+			<div id="yu_sjsm" class="t031"><img class="img" src="/res/images/b02.png"><span>手机版</span><img id="yu_sjmask" src="/res/images/mobile.png"/></div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	
+	//加入收藏
+	function AddFavorite(sURL, sTitle) {
+		sURL = encodeURI(sURL);
+		try {
+			window.external.addFavorite(sURL, sTitle);
+		} catch (e) {
+			try {
+				window.sidebar.addPanel(sTitle, sURL, "");
+			} catch (e) {
+				alert("您的浏览器不支持自动加入收藏功能，请使用Ctrl+D进行添加，或手动在浏览器里进行设置！");
+			}
+		}
+	}
+	//设为首页
+	function SetHome(url) {
+		if (document.all) {
+			document.body.style.behavior = 'url(#default#homepage)';
+			document.body.setHomePage(url);
+		} else {
+			alert("您的浏览器不支持自动设置页面为首页功能，请您手动在浏览器里设置该页面为首页！");
+		}
+	}
+	$("#yu_sjsm span,#yu_sjsm .img").click(function(){
+		var ul = $("#yu_sjmask");
+		if(ul.css("display")=="none"){
+			ul.slideDown("fast");
+		}else{
+			ul.slideUp("fast");
+		}
+		//点空白弹窗消失
+		$(document).mouseup(function(e){
+			var _con = $('#yu_sjmask');   // 设置目标区域
+			if(!_con.is(e.target) && _con.has(e.target).length === 0){ // Mark 1
+				ul.slideUp("fast");
+			}
+		});
+	});
+</script>
+<div class="c01">
+	<div class="pd_t01 black wryh">
+	<a href="/xxgk/index.html" target="_blank">信息公开</a>　 <a href="/xwzx/index.html" target="_blank">新闻资讯</a>　 <a href="/ygkj/index.html" target="_blank">阳光开奖</a>　 <a href="/gywh/index.html" target="_blank">公益·文化</a>　 <a href="/dfdt/index.html" target="_blank">地方动态</a>　 <a href="/jcsp/index.html" target="_blank">精彩视频</a>　 <a href="/ztbd/index.html" target="_blank">专题报道</a>　 <a href="/fwgj/index.html" target="_blank">服务·工具</a>　 <a href="/dlt/index.html" target="_blank">超级大乐透</a>　 <a href="/gp/index.html" target="_blank">高频</a>　 <a href="/jc/index.html" target="_blank">竞彩</a>　 <a href="/zc/index.html" target="_blank">传统足彩</a>　 <a href="/dgg/index.html" target="_blank">顶呱刮</a>　 <a href="/plwf/index.html" target="_blank">排列玩法</a>　 <a href="/qxc/index.html" target="_blank">7星彩</a>　 <a href="http://chart.lottery.gov.cn/" target="_blank">体彩数据</a>
+	</div>
+	<div class="ad_pd"><script type="text/javascript" src="/res/js/ad_173.js"></script></div>
+</div><!-- 首页头文件 end -->
+<!-- main -->
+<div class="main zgdjj">
+    <div class="main_top">
+        <div class="blockHead yylClear">
+            <div class="bhTitle"></div>
+<div class="search">
+<form action="/search.jspx" id="searchForm">
+		<input class="text" type="text" id="keywordInput" name="keyword" placeholder="11选5"/>
+	
+			<input class="submit" type="button" id="searchSubmit"/>
+</form>
+</div>
+
+<script type="text/javascript" language="javascript">
+		function trimSpace(str){   
+		   return str.replace(/^(\s|\u00A0)+/,'').replace(/(\s|\u00A0)+$/,'');   
+		}
+		function checkSearchForm() {
+                        var flg = false; 
+			var keywordInput = trimSpace(document.getElementById('keywordInput').value);
+			if(keywordInput != '' && keywordInput!='请输入关键词'){
+				flg=true;
+			}
+			document.getElementById("keywordInput").focus(); 
+			return flg;
+		}
+		
+		$(function(){
+			$("#searchSubmit").click(function(){
+			  if(checkSearchForm()){
+			   $("#searchForm").submit();
+			  }
+		});
+
+});
+</script>        </div>
+    </div>
+    <!-- 区域一 -->
+ <div class="main_jc_p01">
+        <dl>
+            <dt>
+            	<a href="/jc/index.html" target="_blank">频道首页</a>
+            	<a href="/jczq/index.html" target="_blank">竞彩足球资讯</a>
+            	<a href="/jclq/index.html" target="_blank">竞彩篮球资讯</a>
+            	<a href="/zqzjxw/index.html" target="_blank">中奖新闻 </a>
+            	<a href="/mxyz/index.html" target="_blank">明星业主</a>
+            	<a  href="/football/match_list.jspx" target="_blank">受注赛程</a>
+            	<a  href="/football/result.jspx" target="_blank">赛果开奖</a>
+            	<a href="/football/counter.jspx" target="_blank">计算器</a>
+            </dt>	
+        </dl>
+    </div>    <!-- /区域一 -->
+    <!--导航-->
+    <div class="navigation yylClear">
+        <div class="left">
+        <a href="/index.html">中国体彩网</a> > <a href="/football/match_list.jspx">竞彩足球</a> > 
+            VS
+        </div>
+        <form action="/football/match_hhad.jspx" id="fb_form1" name="fb_form1" method="post">
+             <input type="hidden" id="mid" name="mid" value="0">
+        </form>
+        <select class="right" id="fb_select">
+                 
+                         <option value="103903">周一001 荷乙 阿贾克斯青年队 VS 海尔蒙特</option>
+
+                 
+                         <option value="103904">周一002 荷乙 埃因霍温青年队 VS 马斯特里赫特</option>
+
+                 
+                         <option value="103905">周一003 荷乙 阿尔克马尔青年队 VS 奥斯</option>
+
+                 
+                         <option value="103906">周一004 葡超 马里迪莫 VS 波尔蒂芒尼斯</option>
+
+                 
+                         <option value="103907">周一005 德乙 比勒费尔德 VS 柏林联合</option>
+
+                 
+                         <option value="103908">周一006 意甲 拉齐奥 VS 热那亚</option>
+
+                 
+                         <option value="103909">周一007 法乙 布雷斯特 VS 兰斯</option>
+
+                 
+                         <option value="103910">周一008 英超 沃特福德 VS 切尔西</option>
+
+                 
+                         <option value="103911">周一009 西甲 拉斯帕尔马斯 VS 马拉加</option>
+
+                 
+                         <option value="103912">周一010 葡超 塞图巴尔 VS 比兰尼塞斯</option>
+
+                 
+                         <option value="103913">周一011 阿甲 查卡里塔青年 VS 萨斯菲尔德</option>
+
+                 
+                         <option value="103914">周一012 阿甲 坦珀利 VS 铁路工场</option>
+
+                 
+                         <option value="103915">周一013 智利甲 基约塔 VS 库里科联</option>
+
+                 
+                         <option value="103916">周一014 阿甲 圣胡安圣马丁 VS 老虎竞技</option>
+
+        </select>
+    </div>
+    <!--导航 end-->
+    <div class="ggt yylClear">
+        <div class="d1"></div>
+        <div class="d2">
+            <p class="p1"></p>
+            <p class="p2">比赛开始时间 </p>
+        </div>
+        <div class="d3"></div>
+    </div>
+    <div class="xxsj" style="padding-bottom: 40px;">
+        <table class="table1 yylMt20" width="1040" border="0" cellpadding="1" cellspacing="1" bgcolor="D2D2D2" style=" font-size:14px; line-height:25px;">
+            <tr>
+                <td height="30" colspan="7" align="left" bgcolor="#F3F3F3" style="position: relative;"><span class="STYLE8"><b>单场开奖结果</b></span><a class="dy" href="javascript:void(0);" onclick="javascript:window.print();">打印</a> </td>
+            </tr>
+            <tr >
+                <td height="25" align="center" bgcolor="FFF1E7">玩法</td>
+
+                <td  align="center" style="background-color:#FFF1E7;">胜平负</td>
+                <td  colspan="2" align="center" bgcolor="FFF1E7">让球胜平负</td>
+                <td  align="center" style="background-color:#FFF1E7;">猜比分</td>
+                <td  align="center" style="background-color:#FFF1E7;">总进球数</td>
+                <td  align="center" style="background-color:#FFF1E7;">半全场胜平负</td>
+            </tr>
+            <tr >
+                <td height="25" align="center" bgcolor="#FFFFFF">开奖结果</td>
+                <td align="center" bgcolor="#FFFFFF"></td>
+                <td align="center" bgcolor="#FFFFFF">()</td>
+                <td align="center" bgcolor="#FFFFFF"></td>
+                <td align="center" bgcolor="#FFFFFF"></td>
+                <td align="center" bgcolor="#FFFFFF"></td>
+                <td align="center" bgcolor="#FFFFFF"></td>
+            </tr>
+        </table>
+        <table class="table2 yylMt20" width="1040" border="0" cellpadding="1" cellspacing="1" bgcolor="D2D2D2" style=" font-size:14px; line-height:25px;">
+            <tr>
+                <td  style="background-color:#F3F3F3;" height="30" colspan="4" align="left"><span class="STYLE8"><b>　　胜平负过关固定奖金</b></span></td>
+            </tr>
+            <tr >
+                <td width="290" align="center" bgcolor="FFF1E7">更新次数</td>
+                <td align="center" bgcolor="#FFF1E7">胜</td>
+                <td align="center" bgcolor="#FFF1E7">平</td>
+                <td align="center" bgcolor="#FFF1E7">负</td>
+            </tr>
+            <tbody>
+            </tbody>
+        </table>
+        <table class="table3 yylMt20" width="1040" border="0" cellpadding="1" cellspacing="1" bgcolor="D2D2D2"style=" font-size:14px; line-height:25px;">
+            <tr>
+                <td  style="background-color:#F3F3F3;" height="30" colspan="5" align="left"><span class="STYLE8"><b>　　让球胜平负过关固定奖金(所有玩法固定奖金以购买时票面显示奖金为准)</b></span></td>
+            </tr>
+            <tr >
+                <td align="center" bgcolor="FFF1E7">更新次数</td>
+                <td width="150" align="center" bgcolor="#FFF1E7">让球</td>
+                <td width="200" align="center" bgcolor="#FFF1E7">胜</td>
+                <td width="200" align="center" bgcolor="#FFF1E7">平</td>
+                <td width="200" align="center" bgcolor="#FFF1E7">负</td>
+            </tr>
+            <tbody>
+            </tbody>
+
+        </table>
+        <table class="table4 yylMt20" width="1040" border="0" cellpadding="1" cellspacing="1" bgcolor="D2D2D2" style=" font-size:14px; line-height:25px;">
+            <tr>
+                <td  style="background-color:#FFF1E7;" height="30" colspan="13" align="left"><span class="STYLE8"><b>　　比分固定奖金</b></span></td>
+            </tr>
+        </table>
+        <table class="table5 yylMt20" width="1040" border="0" cellpadding="1" cellspacing="1" bgcolor="D2D2D2" style=" font-size:14px; line-height:25px;">
+            <tr> 
+                <td  style="background-color:#F3F3F3;" height="30" colspan="9" align="left"><span class="STYLE8"><b>　　总进球数过关固定奖金</b></span></td>
+            </tr>
+            <tr >
+                <td width="290" align="center" bgcolor="FFF1E7">更新次数</td>
+                <td width="94" align="center" bgcolor="#FFF1E7">0</td>
+                <td width="94" align="center" bgcolor="#FFF1E7">1</td>
+                <td width="94" align="center" bgcolor="#FFF1E7">2</td>
+                <td width="94" align="center" bgcolor="#FFF1E7">3</td>
+                <td width="94" align="center" bgcolor="#FFF1E7">4</td>
+                <td width="94" align="center" bgcolor="#FFF1E7">5</td>
+                <td width="94" align="center" bgcolor="#FFF1E7">6</td>
+                <td width="94" align="center" bgcolor="#FFF1E7">7+</td>
+            </tr>
+            <tbody>
+            </tbody>
+        </table>
+        <table class="table6 yylMt20" width="1040" border="0" cellpadding="1" cellspacing="1" bgcolor="D2D2D2" style=" font-size:14px; line-height:25px;">
+            <tr>
+                <td  style="background-color:#F3F3F3;" height="30" colspan="10" align="left"><span class="STYLE8"><b>　　半全场胜平负过关固定奖金</b></span></td>
+            </tr>
+            <tr>
+                <td width="290" align="center" bgcolor="FFF1E7">更新次数</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">胜胜</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">胜平</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">胜负</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">平胜</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">平平</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">平负</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">负胜</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">负平</td>
+                <td width="83" align="center" bgcolor="#FFF1E7">负负</td>
+            </tr>
+           
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <!--xxsj end-->
+
+</div>
+<!-- main end -->
+<!-- 尾 -->
+<!-- 尾 -->
+<div class="c01">
+	<div style="float:left; width:1040px; height:18px; line-height:18px; text-align:center; color:#fff; font-family:Verdana;padding:0px 0 0 0; background:#CE2A33; margin-top:0px;" class="dgray">
+    购彩有节制，请理性投注！未满18周岁的未成年人不得购买彩票及兑奖！
+	</div>
+	<div style="float:left; width:1040px; height:120px; line-height:28px; text-align:center; color:#222222; font-family:Verdana;padding:10px 0 0 0; background:#fff;" class="dgray">
+    <a href="javascript:void(0);" onclick='SetHome(window.location)'>设为首页</a> | <a href="/map/index.html" target="_blank">网站地图</a> | <a href="/gywm2/1610.htm" target="_blank">关于我们</a> | <a href="/lxwm/1611.htm" target="_blank">联系我们</a> | <a href="/yhfwmztk/5.htm" target="_blank">用户服务及免责条款</a><br>
+国家体育总局体育彩票管理中心 Copyright &copy; 2017 www.lottery.gov.cn  ICP经营许可证：京ICP证030713号 京公网安备110101002608号<br>
+本网站赛程、赛果、奖金等数据由国家体育总局体育彩票管理中心发布   由北京华奥星空科技发展有限公司承办 
+  </div>
+</div>
+<!-- 尾 end -->
+<!-- 尾 end -->
+
+<script src="/res/js/jc/jc_match.js" type="text/javascript"></script>
+</body>
+</html>

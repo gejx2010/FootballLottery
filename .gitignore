@@ -1,0 +1,9 @@
+logs/
+cnn_output/
+only_cnn_output/
+cur_result_for_server*
+*.pyc
+test.py
+test.txt
+data/data_out*
+data/match_out*
