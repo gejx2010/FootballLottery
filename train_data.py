@@ -21,8 +21,8 @@ DATA_SIZE = 36
 DATA_HEIGHT = 36
 DATA_WIDTH = 16
 OUTPUT_TYPE = 5
-KEEP_PROBS = [[1.0, 1.0], 
-              [1.0, 1.0],
+KEEP_PROBS = [[0.8, 0.8], 
+              [0.8, 0.8],
               [1.0, 1.0],
               [1.0, 1.0],
               [1.0, 1.0]]
@@ -79,6 +79,13 @@ class LotteryCNN():
       his_acc = json.load(rf)
     return his_acc
 
+  def strip_data(self, data):
+    for x in data:
+      x[0] = float(x[0]) / 1000
+      x[1] = float(x[1]) / 1000
+      x[2:9] = [0] * 7 
+    return data
+
   def load_data(self, infile):
     if os.path.getsize(infile) <= 0:
       return [], []
@@ -89,6 +96,7 @@ class LotteryCNN():
     data = [x[0] for x in data_list]
     labels = [x[1] for x in data_list]
     np_data = np.array(data)
+    np_data = self.strip_data(np_data)
     np_data = np.reshape(np_data, [-1, self.data_height, self.data_width, 1])
     zero_data = np.zeros([self.data_len, self.data_height, self.data_height - self.data_width, 1])
     np_data = np.concatenate([np_data, zero_data], axis=2)
@@ -98,7 +106,7 @@ class LotteryCNN():
 
   def split_data(self):
     self.res_data = []
-    counts = [9.0/10, 1.0/10, 0.0/10]
+    counts = [9.5/10, 0.5/10, 0.0/10]
     shuf = np.random.permutation(np.arange(self.data_len))
     base_num = 0
     for pro in counts:
@@ -113,7 +121,7 @@ class LotteryCNN():
     self.train_data = self.res_data[0]
     self.dev_data = self.res_data[1]
     self.test_data = self.res_data[2]
-    print "len of data size, (train, dev, test): (%d, %d, %d)" % (len(self.train_data), len(self.dev_data), len(self.test_data))
+    print "len of data size, (train, dev, test): (%d, %d, %d)" % (len(self.train_data[0]), len(self.dev_data[0]), len(self.test_data[0]))
 
   def get_data_with_type(self, data, train_type):
     if train_type == 4:

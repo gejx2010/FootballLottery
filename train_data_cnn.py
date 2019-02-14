@@ -58,6 +58,13 @@ class LotteryCNN():
     with open(self.his_path, "r") as rf:
       self.his_acc = json.load(rf)
 
+  def strip_data(self, data):
+    for x in data:
+      x[0] = float(x[0]) / 1000
+      x[1] = float(x[1]) / 1000
+      x[2:9] = [0] * 7 
+    return data
+
   def load_data(self, infile):
     rf = open(infile, "r")
     data_list = json.load(rf)
@@ -67,6 +74,7 @@ class LotteryCNN():
     data = [x[0] for x in data_list]
     labels = [x[1] for x in data_list]
     np_data = np.array(data)
+    np_data = self.strip_data(np_data)
     np_data = np.reshape(np_data, [-1, self.data_height, self.data_width, 1])
     zero_data = np.zeros([self.data_len, self.data_height, self.data_height - self.data_width, 1])
     np_data = np.concatenate([np_data, zero_data], axis=2)
@@ -75,7 +83,7 @@ class LotteryCNN():
 
   def split_data(self):
     self.res_data = []
-    counts = [8.0/10, 1.0/10, 1.0/10]
+    counts = [9.5/10, 0.25/10, 0.25/10]
     shuf = np.random.permutation(np.arange(self.data_len))
     base_num = 0
     for pro in counts:
