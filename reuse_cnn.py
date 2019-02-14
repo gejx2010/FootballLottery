@@ -18,9 +18,6 @@ cnn_dir = os.path.join(cur_dir, "cnn_output")
 only_cnn_dir = os.path.join(cur_dir, "only_cnn_output")
 gld = GetLotteryData()
 gld.load_shouzhu_match()
-rf = open("match_out_180212.txt", "r")
-match_dict = json.load(rf)
-rf.close()
 
 def find_latest_file(dir_name, res_type):
   res, out = 0, ""
@@ -33,6 +30,7 @@ def find_latest_file(dir_name, res_type):
   return out
 
 def turn_query_to_dict(query):
+  match_dict = {}
   for ll in match_dict:
     info = ll[u"info"]
     print "info home:", info[u"home"]

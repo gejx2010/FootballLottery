@@ -7,3 +7,11 @@ test.py
 test.txt
 data/data_out*
 data/match_out*
+nohup.out
+data/backup*
+data/football_team.txt
+data/match_league.txt
+data/shouzhu*
+data/total_data.txt
+data/total_match_result.txt
+data/history*

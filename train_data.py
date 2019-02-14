@@ -46,16 +46,18 @@ class LotteryCNN():
     if not os.path.exists(self.cnn_dir):
       os.makedirs(self.cnn_dir)
     # save history accuracy
-    self.his_path = os.path.join(cur_dir, "history_accuracy.txt")
+    self.his_path = os.path.join(cur_dir, "data/history_accuracy.txt")
     self.his_acc = self.load_history_accuracy()
     # load data
-    self.match_file_path = os.path.join(cur_dir, "total_match_result.txt")
-    self.shouzhu_path = os.path.join(cur_dir, "shouzhu_data.txt")
+    self.match_file_path = os.path.join(cur_dir, "data/total_match_result.txt")
+    self.shouzhu_path = os.path.join(cur_dir, "data/shouzhu_data.txt")
     with open(self.match_file_path, "r") as rf:
       match_list = json.load(rf)
       print "Length of match list:", len(match_list)
-    self.data_file_path = os.path.join(cur_dir, "total_data.txt")
-    self.data_bcp_path = os.path.join(cur_dir, "backup_data.txt")
+    self.data_file_path = os.path.join(cur_dir, "data/total_data.txt")
+    self.data_bcp_path = os.path.join(cur_dir, "data/backup_data.txt")
+    self.np_data, self.np_labels = self.load_data(self.data_file_path)
+    self.split_data()
     # averaget the train data
     #self.train_data = self.get_data_with_type(self.train_data, self.train_type)
     # construct cnn
@@ -90,21 +92,23 @@ class LotteryCNN():
     np_data = np.reshape(np_data, [-1, self.data_height, self.data_width, 1])
     zero_data = np.zeros([self.data_len, self.data_height, self.data_height - self.data_width, 1])
     np_data = np.concatenate([np_data, zero_data], axis=2)
-    np_data = np_data.__truediv__(1000)
+    #np_data = np_data.__truediv__(1000)
     np_labels = np.array(labels)
     return np_data, np_labels
 
   def split_data(self):
     self.res_data = []
-    counts = [5.0/7, 1.0/7, 1.0/7]
+    counts = [9.0/10, 1.0/10, 0.0/10]
     shuf = np.random.permutation(np.arange(self.data_len))
     base_num = 0
     for pro in counts:
       bnd = int(self.data_len * pro)
       cur_data = []
+      cur_labels = []
       for i in range(bnd):
-        cur_data.append((self.np_data[shuf[base_num + i], :, :, :], self.np_labels[shuf[base_num + i], self.train_type]))
-      self.res_data.append(cur_data)
+        cur_data.append(self.np_data[shuf[base_num + i], :, :, :])
+        cur_labels.append(self.np_labels[shuf[base_num + i], self.train_type])
+      self.res_data.append([cur_data, cur_labels])
       base_num += bnd
     self.train_data = self.res_data[0]
     self.dev_data = self.res_data[1]
@@ -145,11 +149,8 @@ class LotteryCNN():
     return np.asarray(ans_data)
 
   def get_batch(self, data_set, rank):
-    data_len = len(data_set)
-    data, label = [], []
-    for dd, ll in data_set:
-      data.append(dd)
-      label.append(ll)
+    data_len = len(data_set[0])
+    data, label = data_set[0], data_set[1]
     beg = (rank * self.batch_size) % data_len
     end = ((rank + 1) * self.batch_size) % data_len
     if beg < end:
@@ -163,11 +164,8 @@ class LotteryCNN():
     return np.asarray(x_out), np.asarray(y_out)
 
   def get_random_batch(self, data_set):
-    data_len = len(data_set)
-    data, label = [], []
-    for dd, ll in data_set:
-      data.append(dd)
-      label.append(ll)
+    data_len = len(data_set[0])
+    data, label = data_set[0], data_set[1]
     shuf = np.random.permutation(np.arange(data_len))[0 : self.batch_size]
     x_out, y_out = [], []
     for i in shuf:
@@ -324,6 +322,7 @@ class LotteryCNN():
         self.orig_probability = tf.nn.softmax(self.eval_logits, name="orig_probability")
         self.orig_correct_prediction = tf.equal(tf.cast(self.input_y, tf.int32), tf.cast(self.orig_prediction, tf.int32), name="orig_correct_prediction")
         self.accuracy = tf.reduce_mean(tf.cast(self.orig_correct_prediction, tf.float32), name="orig_accuracy")
+      self.test_score = tf.placeholder(tf.float32, [1], name="TestScore")
       self.pure_logits = self.choose_action(self.eval_logits)
       with tf.name_scope("output"):
         self.prediction = tf.argmax(self.pure_logits, 1, name="prediction")
@@ -335,11 +334,12 @@ class LotteryCNN():
       with tf.name_scope("loss"):
         cross = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.input_y, logits=self.pure_logits)
         self.res_cor_pred = tf.reshape(tf.cast(self.correct_prediction, tf.float32), [-1, 1], name="reshape_correct_prediction")
-        #self.reward = tf.reduce_mean(cross) * -10
-        #self.q_tar = self.reward + self.gamma * self.target_logits
-        self.diff_mat = self.alpha * self.compute_target_predict_diff_along_y(self.input_y, self.target_logits, self.pure_logits)
+        self.reward = tf.reduce_mean(cross) * -10
+        self.q_tar = self.test_score * 10 + self.reward + self.gamma * self.target_logits
+        self.diff_mat = self.alpha * self.compute_target_diff(self.q_tar, self.pure_logits)
+        self.diff_mat = tf.reduce_max(tf.square(self.diff_mat))
         #diff_cross = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.input_y, logits=self.diff_mat)
-        self.loss = tf.reduce_mean(tf.square(self.diff_mat), name="loss")
+        self.loss = tf.reduce_mean(self.diff_mat, name="loss")
         tf.summary.scalar("loss_%d" % self.train_type, self.loss)
       with tf.name_scope("train"):
         #self.adam_opt = tf.train.AdamOptimizer(self.adam_params[self.train_type], name="adam")
@@ -442,20 +442,24 @@ class LotteryCNN():
       time_final = 1000000
       loss, acc = 0.0, 0.0
       lr_init = 1e-4
-      lr_end = 1e-5
+      lr_end = 5e-5
       i = 0
-      train_times = 2000
+      train_times = 20000
+      score_acc = 0.0
       while True:
         if i < train_times * 1 / 4:
           cur_lr = lr_init
         else:
           cur_lr = lr_end
         sess.run(self._lr_update, feed_dict={self._new_lr: cur_lr})
-        x_batch, y_batch = self.get_batch_from_lib(data_type="train", mode=["in_order", i])
+        x_batch, y_batch = self.get_batch(self.train_data, i)
         for j in range(time_loop):
           q_tar = sess.run(self.next_logits, feed_dict={self.input_x: x_batch, self.prob_holder: self.keep_probs[self.train_type]})
-          tar_lable = sess.run(self.tar_prediction, feed_dict={self.input_x: x_batch, self.prob_holder: self.keep_probs[self.train_type], self.target_logits: q_tar})
-          summary, _, loss, acc = sess.run([self.merged, self.train_step, self.loss, self.accuracy], feed_dict={self.input_x: x_batch, self.input_y: tar_lable, self.prob_holder: self.keep_probs[self.train_type], self.target_logits: q_tar})
+          if j == 0:
+            #tar_lable = sess.run(self.tar_prediction, feed_dict={self.input_x: x_batch, self.prob_holder: self.keep_probs[self.train_type], self.target_logits: q_tar})
+            summary, _, loss, acc = sess.run([self.merged, self.train_step, self.loss, self.accuracy], feed_dict={self.input_x: x_batch, self.input_y: y_batch, self.prob_holder: self.keep_probs[self.train_type], self.target_logits: q_tar, self.test_score: [score_acc]})
+          else:
+            summary, _, loss, acc = sess.run([self.merged, self.train_step, self.loss, self.accuracy], feed_dict={self.input_x: x_batch, self.input_y: y_batch, self.prob_holder: self.keep_probs[self.train_type], self.target_logits: q_tar, self.test_score: [0.0]})
           data_writer.add_summary(summary, i * time_loop + j)
         cur_step = (i + 1) * time_loop
         if cur_step % time_rwd == 0:
@@ -463,13 +467,11 @@ class LotteryCNN():
             print "train type:", self.train_type, "pid:", os.getpid()
             print "current step:", cur_step, ", learning rate:", cur_lr
             print "train loss: %g, accuracy: %g" % (loss, acc)
-          x_batch, y_batch = self.get_batch_from_lib(data_type="dev", mode=["lifo", 0])
+          x_batch, y_batch = self.get_random_batch(self.dev_data)
           q_tar = sess.run(self.next_logits, feed_dict={self.input_x: x_batch, self.prob_holder: self.keep_probs[self.train_type]})
-          e_tar = sess.run(self.prediction, feed_dict={self.input_x: x_batch, self.prob_holder: self.keep_probs[self.train_type]})
-          f_diff = sess.run(self.fin_diff, feed_dict={self.input_x: x_batch, self.prob_holder: self.keep_probs[self.train_type], self.input_y: y_batch, self.target_logits: q_tar})
-          print "e_tar:", e_tar
           #print "f_diff:", f_diff
-          tr_loss, tr_acc, prob, _ = sess.run([self.loss, self.accuracy, self.probability, self.train_step], feed_dict={self.input_x: x_batch, self.input_y: y_batch, self.prob_holder: self.keep_probs[self.train_type], self.target_logits: q_tar})
+          tr_loss, tr_acc, prob = sess.run([self.loss, self.accuracy, self.probability], feed_dict={self.input_x: x_batch, self.input_y: y_batch, self.prob_holder: self.keep_probs[self.train_type], self.target_logits: q_tar, self.test_score: [0.0]})
+          score_acc = tr_acc.item()
           if cur_step % time_test == 0:
             print "devir loss: %g, accuracy: %g" % (tr_loss, tr_acc)
           sess.run(self.replace_target_op)

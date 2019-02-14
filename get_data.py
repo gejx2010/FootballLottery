@@ -35,9 +35,9 @@ class GetLotteryData(object):
     self.total_data_file = os.path.join(self.cur_dir, "data/total_data.txt")
     self.backup_data_file = os.path.join(self.cur_dir, "data/backup_data.txt")
     self.cur_data_file = os.path.join(self.cur_dir, "data/data_out_%s.txt" % time.strftime("%y%m%d", time.localtime()))
-    self.ftn = self.load_file(self.ft_file)
-    self.mln = self.load_file(self.ml_file)
-    self.hmn = self.load_file(self.his_match_file)
+    self.ftn = self.load_file(self.ft_file, ftype="dict")
+    self.mln = self.load_file(self.ml_file, ftype="dict")
+    self.hmn = self.load_file(self.his_match_file, ftype="dict")
     self.shouzhu_match_file = os.path.join(self.cur_dir, "data/shouzhu_match.txt")
     self.shouzhu_data_file = os.path.join(self.cur_dir, "data/shouzhu_data.txt")
     # constant for date length
@@ -54,12 +54,8 @@ class GetLotteryData(object):
                       }
 
   def write_dict_to_file(self, outfile, res_dict):
-    f = open(outfile, "w")
-    rev = dict(zip(res_dict.values(), res_dict.keys()))
-    kl = sorted(rev.keys(), key=lambda x: int(x))
-    for k in kl:
-      f.write(rev[k].encode("utf-8") + "\1" + str(k).encode("utf-8") + "\n")
-    f.close()
+    with open(outfile, "w") as f:
+      f.write(json.dumps(res_dict, ensure_ascii=False, indent=4, sort_keys=True).encode("utf-8"))
 
   def merge_output_file(self, res_list, match_file):
     if not os.path.exists(match_file):
@@ -89,14 +85,16 @@ class GetLotteryData(object):
     self.write_dict_to_file(self.ml_file, self.mln)
     self.write_dict_to_file(self.his_match_file, self.hmn)
   
-  def load_file(self, infile):
+  def load_file(self, infile, ftype=None):
     res = {}
-    f = open(infile, "r")
-    for ll in f:
-      l_seg = ll.strip().split("\1")
-      name, num = l_seg[0].decode("utf-8"), l_seg[1].decode("utf-8")
-      res[name] = num
-    f.close()
+    with open(infile, "r") as f:
+      if not ftype:
+        for ll in f:
+          l_seg = ll.strip().split("\1")
+          name, num = l_seg[0].decode("utf-8"), l_seg[1].decode("utf-8")
+          res[name] = num
+      else:
+        res = json.load(f)
     return res
 
   def write_data_file(self, url=""):
@@ -109,11 +107,11 @@ class GetLotteryData(object):
   def get_data(self, outfile=""):
     if not outfile:
       outfile = self.cur_fb_file
-    of = open(outfile, "w")
-    self.res_list = self.web_model.get_data()
-    of.write(json.dumps(self.res_list, ensure_ascii=False, indent=4, sort_keys=True).encode("utf-8"))
-    self.write_list_to_data_file(self.res_list)
-    of.close()
+    self.res_list = []
+    with open(outfile, "w") as of:
+      self.res_list = self.web_model.get_data()
+      of.write(json.dumps(self.res_list, ensure_ascii=False, indent=4, sort_keys=True).encode("utf-8"))
+      self.write_list_to_data_file(self.res_list)
     return self.res_list
 
   '''
@@ -468,8 +466,18 @@ class GetLotteryData(object):
     res_dict = dict(zip(new_dict.values(), new_dict.keys()))
     self.write_dict_to_file(ofn, res_dict)
 
+  def turn_split_file_to_list_file(self, ifn, ofn):
+    with open(ifn, "r") as rf, open(ofn, "w") as wf:
+      res = {}
+      for i, ll in enumerate(rf):
+        l_str = ll.strip().split("\1")
+        name = l_str[0].decode("utf-8")
+        res[name] = i
+      wf.write(json.dumps(res, ensure_ascii=False, indent=4, sort_keys=True).encode("utf-8"))
+
 if __name__ == "__main__":
   gld = GetLotteryData()
+  #gld.turn_split_file_to_list_file(gld.his_match_file, "data/history_match_id_bcp")
   gld.get_data()
   gld.write_data()
   gld.get_shouzhu_match()

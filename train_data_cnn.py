@@ -42,10 +42,10 @@ class LotteryCNN():
     if not os.path.exists(self.cnn_dir):
       os.makedirs(self.cnn_dir)
     # save history accuracy
-    self.his_path = os.path.join(cur_dir, "history_accuracy_cnn.txt")
+    self.his_path = os.path.join(cur_dir, "data/history_accuracy_cnn.txt")
     self.load_history_accuracy()
     # load data
-    self.data_file_path = os.path.join(cur_dir, "total_data.txt")
+    self.data_file_path = os.path.join(cur_dir, "data/total_data.txt")
     self.np_data, self.np_labels = self.load_data(self.data_file_path)
     self.split_data()
     # construct cnn
@@ -108,13 +108,13 @@ class LotteryCNN():
       x_out, y_out = x_out, y_out
     return np.asarray(x_out), np.asarray(y_out)
 
-  def get_random_batch(self, data_set):
+  def get_random_batch(self, data_set, batch_size):
     data_len = len(data_set)
     data, label = [], []
     for dd, ll in data_set:
       data.append(dd)
       label.append(ll)
-    shuf = np.random.permutation(np.arange(data_len))[0 : self.batch_size]
+    shuf = np.random.permutation(np.arange(data_len))[0 : batch_size]
     x_out, y_out = [], []
     for i in shuf:
       x_out.append(data[i])
@@ -230,7 +230,7 @@ class LotteryCNN():
         if cur_step % 100 == 0:
           print "current step:", cur_step
           print "train loss: %g, accuracy: %g" % (loss, acc)
-          x_batch, y_batch = self.get_random_batch(self.dev_data)
+          x_batch, y_batch = self.get_random_batch(self.dev_data, 1024)
           loss, acc, prob = sess.run([self.loss, self.accuracy, self.probability], feed_dict={self.input_x: x_batch, self.input_y: y_batch, self.prob_holder: self.keep_probs[self.train_type]})
           print "tests loss: %g, accuracy: %g" % (loss, acc)
           take_down_pro = 0.001
